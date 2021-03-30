@@ -1,27 +1,27 @@
 # Notes on RxJS 6.6.7
 
-- Observable: represent a collection of future values or events. 
-Subscribing to an Observable is analogous to calling a Function.
-- Observer: a callback that knows how to listen to values delivered by the Observables
-- Subscription: execute of the Observable and its canceling of execution
-- Operators: functions to deal with collection
-- Subject: multicast a value or event to multiple Observers
-- Schedulers: concurrent coordinate computation
+- Observable: represent a collection of future values or events. Subscribing to an Observable is analogous to calling a Function.
+- Observer: a callback that knows how to listen to values delivered by the Observables.
+- Subscription: execute of the Observable and its canceling of execution.
+- Operators: functions to deal with collection.
+- Subject: multicast a value or event to multiple Observers.
+- Schedulers: concurrent coordinate computation.
 
-- Flow: range of operator to control how events flow through your Observables, like delay, filter, take, debounceTime
-- Values: transform values passed through Observables
+- Flow: range of operator to control how events flow through your Observables, like delay, filter, take, debounceTime.
+- Values: transform values passed through Observables.
 
-Pull versus Push
-- Pull system: the Consumer determines when it received the data from the Producer. The producer is unaware of when data will be delivered to the Consumer. Every JavaScript function is a Pull system, the function is a Producer of Data, and the code which uses the function consumes it by "pulling" out a single returned value.
+## Pull versus Push
+
+- Pull system: the Consumer determines when it received the data from the Producer. The producer is unaware of when data will be delivered to the Consumer. Every JavaScript function is a Pull system, the function is a Producer of Data, and the code which uses the function consumes it by "pulling" out a single returned value.\
 Producer, passive produce data when requested. Consumer, active decides when data is requested.
 
 - Push system: the Producer determines when to send data to the Consumer. The Consumer I unaware of when it will receive the data.
-Promises are a common type of Push system in JavaScript. A Promise (the Producer) delivers a resolved value to a registered callback (the Consumer), if the is Promise deices when that value is "pushed" to the callbacks.
+Promises are a common type of Push system in JavaScript. A Promise (the Producer) delivers a resolved value to a registered callback (the Consumer), if the is Promise decides when that value is "pushed" to the callbacks.\
 Push, actively produces data at is one pace. Passive reacts to recede data.
 
-- A Function is a lazily evaluated computation that synchronously returns a single value on invocation
-- A generator is a lazily evaluated computation that synchronously returns zero to (potentially) infinite values on iteration
-- A Promise is a computation that may (or may not) eventually return a single value
+- A Function is a lazily evaluated computation that synchronously returns a single value on invocation.
+- A generator is a lazily evaluated computation that synchronously returns zero to (potentially) infinite values on iteration.
+- A Promise is a computation that may (or may not) eventually return a single value.
 - An Observable is a lazily evaluated computation that can synchronously or asynchronously return zero to (potentially) infinite values from the time it's invoked onwards.
 
 ## Observable
@@ -30,74 +30,67 @@ Push, actively produces data at is one pace. Passive reacts to recede data.
 - An Observable is a Producer of multiple values, "pushing" them to the Observers (Consumers). Observables have no shared execution.
 - Observables can deliver values either synchronously or asynchronously.
 - Observables can "return" multiple values over time.
-- func.call() means "give me one value synchronously"
-- observable.subscribe() means "give me any amount of values, either synchronously or asynchronously"
-- Observables can be created with `new Observable`. Most commonly, observables are created using creation functions, like of, from, interval, etc.
+- `func.call()` means "give me one value synchronously".
+- `observable.subscribe()` means "give me any amount of values, either synchronously or asynchronously.
+- Observables can be created with `new Observable`. Most commonly, observables are created using creation functions, like of, `from`, `interval`, etc.
 - Subscribing to an Observable is like calling a function, providing callbacks where the data will be delivered to.
-- Subscribe calls are not shared among multiple Observers of the same Observable
+- Subscribe calls are not shared among multiple Observers of the same Observable.
 - The Observable does not even maintain a list of attached Observers. The Observer is not registered as a listener in the Observable.
 - In an Observable Execution, zero to infinite Next notifications may be delivered. If either an Error or Complete notification is delivered, then nothing else can be delivered afterward.
 - It is a good idea to wrap any code in subscribing with try/catch block that will deliver an Error notification if it catches an exception
-- Observable Executions may be infinite, if an Observer want to abort in a finite time it must abort its subscription
+- Observable Executions may be infinite, if an Observer want to abort in a finite time it must abort its subscription.
 - When you subscribe, you get back a Subscription, which represents the ongoing execution. Just call unsubscribe() to cancel the execution.
-- Each Observable must define how to dispose of resources of that execution when we create the Observable using create(), this is done provided an unsubscribe callback in the Observable constructor
+- Each Observable must define how to dispose of resources of that execution when we create the Observable using create(), this is done provided an unsubscribe callback in the Observable constructor.
 
 ## Observer
 
-An Observer is a consumer of values delivered by an Observable. Observers are just objects with three callbacks, one for each type of notification that an Observable may deliver.
-To use the Observer, provide it to the subscribe of an Observable: `observable.subscribe(observer);`
-Observers in RxJS may also be partial. If you don't provide one of the callbacks, the execution of the Observable will still happen normally.
+- An Observer is a consumer of values delivered by an Observable. Observers are just objects with three callbacks, one for each type of notification that an Observable may deliver.
+- To use the Observer, provide it to the subscribe of an Observable: `observable.subscribe(observer)`.
+- Observers in RxJS may also be partial. If you don't provide one of the callbacks, the execution of the Observable will still happen normally.
 
 ## Operators
+
 Allow complex asynchronous code to be easily composed in a declarative manner. There are two types:
 
-- Pipeable Operators are the kind that can be piped to Observables using the syntax `observableInstance.pipe(operator())`. When called, they do not change the exiting Observable instead they return a new Observable, whose subscription logic is based on the first observable.
+- Pipeable Operators: are the kind that can be piped to Observables using the syntax `observableInstance.pipe(operator())`. When called, they do not change the exiting Observable instead they return a new Observable, whose subscription logic is based on the first observable.\
 A Pipeable Operator is a function that takes an Observable as its input and returns another Observable. It is a pure operation: the previous Observable stays unmodified.
 
-- Creation Operators, called standalone functions to create a new Observable, For example: of(1, 2, 3) creates an observable that will emit 1, 2, and 3, one right after another.
-Are functions that can be used to create an Observable with some common predefined behavior or by joining other Observables
+- Creation Operators: called standalone functions to create a new Observable, For example: `of(1, 2, 3)` creates an observable that will emit 1, 2, and 3, one right after another./
+Creation Operators are functions that can be used to create an Observable with some common predefined behavior or by joining other Observables.
 
-- Piping
-Pipeable operators are functions,
+- Piping: a Pipeable Operator is a function that takes an Observable as its input and returns another Observable. It is a pure operation: the previous Observable stays unmodified. A pipeable operator is basically any function that returns a function with the signature: `<T, R>(source: Observable<T>) => Observable<R>`.
 
-- Higher-order Observables
-Observables most commonly emit ordinary values, but surprisingly often, it is necessary to handle Observables of Observables, so-called higher-order Observables. You work with a higher-order Observable by flattening the high-order Observable into a regular Observable.
+- Higher-order Observables: Observables most commonly emit ordinary values, but surprisingly often, it is necessary to handle Observables of Observables, so-called higher-order Observables. You work with a higher-order Observable by flattening the high-order Observable into a regular Observable.
 
 ## Subscription
+
 A Subscription is an object that represents a disposable resource, usually the execution of an Observable. A Subscription essentially just has an unsubscribe() function to release resources or cancel Observable executions.
 
 ## Subject
-It is a special type of Observable that allows values to be multicasted to many Observers, they maintain a registry of many listeners. Every Subject is an Observer.
-While plain Observables are unicast (each subscribed Observer owns an independent execution of the Observable), Subjects are multicast.
+
+It is a special type of Observable that allows values to be multicasted to many Observers, they maintain a *registry of many listeners*. Every Subject is an Observer. While plain Observables are unicast (each subscribed Observer owns an independent execution of the Observable), Subjects are multicast.
 Subjects are the only way of making any Observable execution be shared to multiple Observers.
 
-- Unicast, each subscribed Observer owns an independent execution of the Observable
-- Multicast, values to be multicasted to many Observers
+- Unicast: each subscribed Observer owns an independent execution of the Observable.
+- Multicast: values to be multicasted to many Observers.
 
-Multicasted Observables
-A "multicasted Observable" passes notifications through a Subject that may have many subscribers, whereas a plain "unicast Observable" only sends notifications to a single Observer.
+- Multicasted Observables: A "multicasted Observable" passes notifications through a Subject that may have many subscribers, whereas a plain "unicast Observable" only sends notifications to a single Observer.
 
-BehaviorSubject
-A subject which has a motion of the latest value emitted to its consumers, when the Observer subscribes it will immediately receive the current value. BehaviorSubjects are useful for representing "values over time".
+- BehaviorSubject: A subject which has a motion of the latest value emitted to its consumers, when the Observer subscribes it will immediately receive the current value. BehaviorSubjects are useful for representing "values over time".
 
-ReplaySubject
-Similar to BehaviorSubject it records multiple values from the Observable execution and replays them to new subscribers. A window time in milliseconds.
+- ReplaySubject: Similar to BehaviorSubject it records multiple values from the Observable execution and replays them to new subscribers. A window time in milliseconds.
 
-AsyncSubject
-Only the last value of the Observable execution is sent to its observers and only when the execution completes. It is similar to the last() operator, in that it waits for the complete notification to deliver a single value.
+- AsyncSubject: Only the last value of the Observable execution is sent to its observers and only when the execution completes. It is similar to the `last()` operator, in that it waits for the complete notification to deliver a single value.
 
 ## Scheduler
-A scheduler controls when a subscription starts and when notifications are delivered.
-A Scheduler lets you define in what execution context will an Observable deliver notifications to its Observer.
-If you do not provide the scheduler, RxJS will pick a default scheduler by using the principle of least concurrency, this means that the scheduler which introduces the least amount of concurrency that satisfies the needs of the operator is chosen.
-By default, a subscribe() call on an Observable will happen synchronously and immediately. However, you may delay or schedule the actual subscription to happen on a given Scheduler, using the instance operator subscribeOn(scheduler), where the scheduler is an argument you provide.
 
-Read again:
-https://rxjs-dev.firebaseapp.com/guide/operators
+A scheduler controls when a subscription starts and when notifications are delivered. A Scheduler lets you define in what execution context will an Observable deliver notifications to its Observer. If you do not provide the scheduler, RxJS will pick a default scheduler by using the principle of least concurrency, this means that the scheduler which introduces the least amount of concurrency that satisfies the needs of the operator is chosen.
+By default, a `subscribe()` call on an Observable will happen synchronously and immediately. However, you may delay or schedule the actual subscription to happen on a given Scheduler, using the instance operator `subscribeOn(scheduler)`, where the scheduler is an argument you provide.
 
 ## Operators:
 
-Creation Operators
+### Creation Operators
+
 - ajax
 It creates an observable for an Ajax request with either a request object with url, headers, etc, or a string for a URL.
 
@@ -185,7 +178,7 @@ Returns a new Observable that multicasts (shares) the original Observable. As lo
 ### Error Handling Operators
 
 - catchError
-Catches errors on the observable to be handled by returning a new observable or throwing an error.
+Catches errors on the observable to be handled by returning a new observable or throwing an error
 
 - retry
 Returns an Observable that mirrors the source Observable with the exception of an error. If the source Observable calls error, this method will resubscribe to the source Observable for a maximum of count resubscriptions (given as a number parameter) rather than propagating the error call.
