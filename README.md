@@ -91,176 +91,221 @@ By default, a `subscribe()` call on an Observable will happen synchronously and 
 
 ### Creation Operators
 
-- ajax
+#### ajax
+
 It creates an observable for an Ajax request with either a request object with url, headers, etc, or a string for a URL.
 
-- bindCallback
+#### bindCallback
+
 Converts a callback API to a function that returns an Observable. It is not an operator because its input and output are not Observables.
 
-- bindNodeCallback
+#### bindNodeCallback
+
 Converts a Node.js-style callback API to a function that returns an Observable. A function that returns the Observable that delivers the same values the Node.js callback would deliver. It is not also an operator 
 
-- defer
+#### defer
+
 Creates an Observable that, on subscribe, calls an Observable factory to make an Observable for each new Observer. Creates the Observable lazily, that is, only when it is subscribed. defer allows you to create the Observable only when the Observer subscribes, and create a fresh Observable for each Observer, although each subscriber may think it is subscribing to the same Observable, in fact, each subscriber gets its individual Observable.
 
-- empty (deprecated)
+#### empty (deprecated)
+
 Creates an Observable that emits no items to the Observer and immediately emits a complete notification.
 
-- from
+#### from
+
 Creates an Observable from an Array, an array-like object, a Promise, an iterable object, or an Observable-like object. Converts almost anything to an Observable.
 
-- fromEvent
+#### fromEvent
+
 Creates an Observable that emits events of a specific type coming from the given event target. Creates an Observable from DOM events, or Node.js EventEmitter events, or others. The event is checked via duck typing, it means that no matter what kind of object you have and no matter what environment you work in, you can safely use fromEvent on that object if it exposes described methods (provided of course they behave as was described above)
 
-- fromEventPattern
+#### fromEventPattern
+
 Creates an Observable from an arbitrary API for registering event handlers. fromEventPattern allows you to convert into an Observable any API that supports registering handler functions for events. It is similar to fromEvent, but far more flexible.
 
-- generate
+#### generate
+
 generate allows you to create a stream of values generated with a loop very similar to the traditional for loop. Generates an observable sequence by running a state-driven loop producing the sequence's elements.
 
-- interval
+#### interval
+
 Creates an Observable that emits sequential numbers every specified interval of time, on a specified SchedulerLike.
 
-- of
+#### of
+
 Converts the arguments to an observable sequence. Each argument becomes the next notification.
 
-- range
+#### range
+
 Creates an Observable that emits a sequence of numbers within a specified range.
 
-- throwError
+#### throwError
+
 Creates an Observable that emits no items to the Observer and immediately emits an error notification. Just emits 'error', and nothing else.
 
-- timer
+#### timer
+
 Creates an Observable that starts emitting after an dueTime and emits ever increasing numbers after each period of time thereafter. Its like interval, but you can specify when should the emissions start.
 
-- iif
-Decides at subscription time which Observable will actually be subscribed. If statement for Observables. iif accepts a condition function and two Observables. When an Observable returned by the operator is subscribed, the condition function will be called. Based on what boolean it returns at that moment, the consumer will subscribe either to the first Observable (if the condition was true) or to the second.
+#### iif
 
+Decides at subscription time which Observable will actually be subscribed. If statement for Observables. iif accepts a condition function and two Observables. When an Observable returned by the operator is subscribed, the condition function will be called. Based on what boolean it returns at that moment, the consumer will subscribe either to the first Observable (if the condition was true) or to the second.
 
 ### Join Operators
 
-- combineAll
+#### combineAll
 Flattens an Observable-of-Observables by applying combineLatest when the Observable-of-Observables completes.
 
-- concatAll
+#### concatAll
+
 Flattens an Observable-of-Observables by putting one inner Observable after the other.
 
-- exhaust
+#### exhaust
+
 Converts a higher-order Observable into a first-order Observable by dropping inner Observables while the previous inner Observable has not yet been completed.
 An Observable that takes a source of Observables and propagates the first observable exclusively until it completes before subscribing to the next.
 
-- mergeAll
+#### mergeAll
+
 Converts a higher-order Observable into a first-order Observable which concurrently delivers all values that are emitted on the inner Observables.
 Flattens an Observable-of-Observables.
 
-- startWith
+#### startWith
+
 Returns an Observable that emits the items you specify as arguments before it begins to emit items emitted by the source Observable.
 First emits its arguments in order, and then any emissions from the source.
 
-- withLatestFrom
-Combines the source Observable with other Observables to create an Observable whose values are calculated from the latest values of each, only when the source emits.
-Whenever the source Observable emits a value, it computes a formula using that value plus the latest values from other input Observables, then emits the output of that formula.
+#### withLatestFrom
+
+Combines the source Observable with other Observables to create an Observable whose values are calculated from the latest values of each, only when the source emits. Whenever the source Observable emits a value, it computes a formula using that value plus the latest values from other input Observables, then emits the output of that formula.
 
 ### Multicasting Operators
 
-- multicast
+#### multicast
+
 Returns an Observable that emits the results of invoking a specified selector on items emitted by a ConnectableObservable that shares a single subscription to the underlying stream.
 
-- publish
+#### publish
+
 Returns a ConnectableObservable, which is a variety of Observable that waits until its connect method is called before it begins emitting items to those Observers that have subscribed to it. Makes a cold Observable hot.
 
-- publishLast
+#### publishLast
+
 Returns a connectable observable sequence that shares a single subscription to the underlying sequence containing only the last notification.
 
-- share
+#### share
+
 Returns a new Observable that multicasts (shares) the original Observable. As long as there is at least one Subscriber this Observable will be subscribed and emitting data. When all subscribers have unsubscribed it will unsubscribe from the source Observable. Because the Observable is multicasting it makes the stream hot. This is an alias for multicast(() => new Subject()), refCount().
 
 ### Error Handling Operators
 
-- catchError
+#### catchError
+
 Catches errors on the observable to be handled by returning a new observable or throwing an error
 
-- retry
+#### retry
+
 Returns an Observable that mirrors the source Observable with the exception of an error. If the source Observable calls error, this method will resubscribe to the source Observable for a maximum of count resubscriptions (given as a number parameter) rather than propagating the error call.
 
-- retryWhen
+#### retryWhen
+
 Returns an Observable that mirrors the source Observable except for an error. If the source Observable calls error, this method will emit the Throwable that caused the error to the Observable returned from the notifier. If that Observable calls complete or error then this method will call complete or error on the child subscription. Otherwise, this method will resubscribe to the source Observable.
 
 ### Utility Operators
 
-- tap
+#### tap
 Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source. Intercepts each emission on the source and runs a function, but returns an output that is identical to the source as long as errors don't occur. tap, therefore, spies on existing execution, it does not trigger an execution to happen like subscribe does.
 This operator is useful for debugging your Observables for the correct values or performing other side effects. <<<<<<<<<<<<<<<<
 
-- delay
+#### delay
+
 Delays the emission of items from the source Observable by a given timeout or until a given Date. Time shifts each item by some specified amount of milliseconds.
 
-- delayWhen
+#### delayWhen
+
 Delays the emission of items from the source Observable by a given time span determined by the emissions of another Observable.
 It's like delay, but the time span of the delay duration is determined by a second Observable.
 
-- dematerialize
+#### dematerialize
+
 Converts an Observable of Notification objects into the emissions that they represent. Unwraps Notification objects as actual next, error and complete emissions. The opposite of materialize.
 
-- materialize
+#### materialize
+
 Represents all of the notifications from the source Observable as next emissions marked with their original types within Notification objects.
 Wraps next, error and complete emissions in Notification objects, emitted as next on the output Observable.
 
-- observeOn
+#### observeOn
+
 Re-emits all notifications from source Observable with specified scheduler. Ensure a specific scheduler is used, from outside of an Observable.
 It might be useful if you do not have control over the internal scheduler of a given Observable, but want to control when its values are emitted nevertheless.
 
-- subscribeOn
+#### subscribeOn
+
 Asynchronously subscribes Observers to this Observable on the specified SchedulerLike.
 
-- timeInterval
+#### timeInterval
+
 Emits an object containing the current value, and the time that has passed between emitting the current value and the previous value, which is calculated by using the provided scheduler's now() method to retrieve the current time at each emission, then calculating the difference. The scheduler defaults to async, so by default, the interval will be in milliseconds.
 
-- timestamp
+#### timestamp
+
 Attaches a timestamp to each item emitted by an observable indicating when it was emitted
 
-- timeout
+#### timeout
+
 Errors if Observable does not emit a value in given time span. Timeouts on Observable that doesn't emit values fast enough.
 
-- timeoutWith
+#### timeoutWith
+
 Errors if Observable does not emit a value in given time span, in case of which subscribes to the second Observable. It's a version of timeout operator that lets you specify fallback Observable.
 
-- toArray
+#### toArray
+
 Collects all source emissions and emits them as an array when the source completes. Get all values inside an array when the source completes
 
 ### Conditional and Boolean Operators
 
-- defaultIfEmpty
+#### defaultIfEmpty
+
 Emits a given value if the source Observable completes without emitting any next value, otherwise mirrors the source Observable.
 If the source Observable turns out to be empty, then this operator will emit a default value.
 
-- every
+#### every
+
 Returns an Observable that emits whether or not every item of the source satisfies the condition specified.
 A simple example emitting true if all elements are less than 5, false otherwise
 
-- find
+#### find
+
 Emits only the first value emitted by the source Observable that meets some condition.
 Finds the first value that passes some test and emits that.
 
-- findIndex
+#### findIndex
+
 Emits only the index of the first value emitted by the source Observable that meets some condition.
 It's like find, but emits the index of the found value, not the value itself.
 
-- isEmpty
+#### isEmpty
+
 Emits false if the input observable emits any values, or emits true if the input observable completes without emitting any values.
 Tells whether any values are emitted by an observable
 
 Mathematical and Aggregate Operators
 
-- count
+#### count
+
 Counts the number of emissions on the source and emits that number when the source completes.
 
-- max
+#### max
+
 The Max operator operates on an Observable that emits numbers (or items that can be compared with a provided function), and when source Observable completes it emits a single item: the item with the largest value.
 
-- min
+#### min
+
 The Min operator operates on an Observable that emits numbers (or items that can be compared with a provided function), and when source Observable completes it emits a single item: the item with the smallest value.
 
-- reduce
+#### reduce
+
 Applies an accumulator function over the source Observable, and returns the accumulated result when the source completes, given an optional seed value.
 Combines together all values emitted on the source, using an accumulator function that knows how to join a new source value into the accumulation from the past.
